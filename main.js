@@ -3,6 +3,8 @@ window.addEventListener("load",()=> {
     const ctx = canvas.getContext("2d")
     canvas.width = 800
     canvas.height = 720
+
+    
     
     class Player {
         constructor(gameHeight, gameWidth) { 
@@ -13,31 +15,58 @@ window.addEventListener("load",()=> {
             this.img = document.getElementById("player")
             this.x = 0
             this.y = this.gameHeight - this.height
-            this.speed = 0
+            this.vx = 0
+            this.vy = 0
+            this.weight = 1
+
             
         }
+        
+        
+
+        isOnGround() {
+            return this.y >= this.gameHeight - this.height
+        }
+
         draw(context) {
             context.fillStyle = "red"
             context.fillRect(this.x,this.y,this.height,this.width)
             // context.drawImage(this.img,this.x,this.y)
         }
+
         update(input) {
             if(input.keys.includes("d")) {
-                this.speed = 3
-            }  else {
-                this.speed = 0
+                this.vx = 3
+            }  else if((input.keys.includes("a"))) {
+                this.vx = -3
             }
-            this.x += this.speed
+               else {
+                this.vx = 0
+            }
+            this.x += this.vx
+             
+            if(input.keys.includes("w")) {
+                this.vy = -28           
+            }  else {
+                this.vy = 0
+            }
+            if(this.x<0) {
+                this.x = 0
+            } else if(this.x>this.gameWidth - this.width) {
+                this.x = this.gameWidth - this.width
 
-            if(input.keys.includes("a")) {
-                this.speed = 3
-            }  else {
-                this.speed = 0
             }
-            this.x -= this.speed
+         
             
-        }
-
+            if(!this.isOnGround()) {
+                this.vy += this.weight
+                this.weight++
+            } else if(this.isOnGround()) {
+                this.weight = 1
+                
+            }
+            this.y += this.vy
+        }        
     }
     class InputHandler {
         constructor() {
@@ -68,6 +97,7 @@ window.addEventListener("load",()=> {
         ctx.clearRect(0,0,canvas.width,canvas.height)
         player.draw(ctx)
         player.update(input)
+        
         requestAnimationFrame(animate)
 
     }
