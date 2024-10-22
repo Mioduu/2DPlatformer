@@ -17,3 +17,9 @@
     transform: translate(-50%, -50%);
     
 }
+
+#debug {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+}

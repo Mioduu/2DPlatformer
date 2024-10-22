@@ -47,11 +47,12 @@ window.addEventListener("load",()=> {
                 this.dHeight)
         }
         isColliding(platform) {
+            console.log(this,platform)
             if(
-                (this.x + this.width / 4 >= platform.position.x - platform.width / 2) &&
+                (this.x >= platform.position.x - platform.width / 2) &&
                 (this.x - this.width / 2 <= platform.position.x + platform.width / 2) &&
                 (this.y + this.height >= platform.position.y - platform.height / 2) &&
-                (this.y + this.height <= platform.position.y + platform.height / 2)
+                (this.y  <= platform.position.y + platform.height / 2)
             ) {
                 return true
             }
@@ -59,7 +60,7 @@ window.addEventListener("load",()=> {
             
         }            
 
-        update(input) {
+        update(input,platforms) {         
             if(input.keys.includes("d")) {
                 this.vx = 3
                 this.frameX = 0
@@ -71,18 +72,26 @@ window.addEventListener("load",()=> {
             }
                else {
                 this.vx = 0
-                this.frameX = 0
-                this.frameY = 0
             }
             this.x += this.vx
-             
-            if(input.keys.includes("w")) {
-                this.vy = -25
-                this.frameX = 1
-                this.frameY = 0
-            }  else {
+
+            if(this.isOnGround() || platforms.some(p => this.isColliding(p))) {
                 this.vy = 0
-            }
+                if(input.keys.includes("w")) {
+                    this.vy = 20
+                    this.frameX = 1
+                    this.frameY = 0
+                } 
+                if(this.vy === 0 && this.vx === 0) {
+                    this.frameX = 0
+                    this.frameY = 0
+                }
+            }  else if(!this.isOnGround() && platforms.some(p => !this.isColliding(p))) {
+                this.vy -= this.weight
+            } 
+             this.y -= this.vy
+
+            
 
             if(this.x<0) {
                 this.x = 0
@@ -90,17 +99,11 @@ window.addEventListener("load",()=> {
                 this.x = this.gameWidth - this.width
             }
 
-            if(this.y > this.gameHeight - this.height) {
+            if(this.y > this.gameHeight) {
                 this.y = this.gameHeight - this.height
             }
-            if(!this.isOnGround() && !this.isColliding(platform)) {
-                this.vy += this.weight
-                this.weight += 1
-            } else if(this.isOnGround() || this.isColliding(platform)) {
-                this.weight = 1
-                
-            }
-            this.y += this.vy
+            
+            
         }        
     }
     class InputHandler {
@@ -124,33 +127,47 @@ window.addEventListener("load",()=> {
         }
     }
     class Platform {
-        constructor() {
+        constructor(x,y,width,height) {
             this.position = {
-                x: 400,
-                y: 500
+                x: x, // 400
+                y: y // 500
             }
-            this.width = 150
-            this.height = 20
+            this.width = width, // 150
+            this.height = height // 20
         }
-        draw() {
-            ctx.fillStyle = "red"
-            ctx.fillRect(this.position.x,this.position.y,this.width,this.height)
+        draw(context) {
+            context.fillStyle = "black"
+            context.fillRect(this.position.x,this.position.y,this.width,this.height)
         }
     }
-
-    const platform = new Platform()
+    var platforms = [
+        new Platform(470,600,150,20),
+        new Platform(700,450,150,20),
+        new Platform(570,300,100,20),
+        new Platform(500,300,100,20),
+        new Platform(300,300,100,20),
+        new Platform(200,300,100,20),
+        new Platform(0,200,120,20)
+    ]
+    function addPlatforms(givenPlatforms,context) {
+        for (var i = 0; i<givenPlatforms.length; i++) {
+            var platform = givenPlatforms[i]
+            platform.draw(context)
+        }
+    }
+        
+    const div = document.getElementById("debug")
     const input = new InputHandler()
     const player = new Player(canvas.height, canvas.width)
     function animate() {
         ctx.clearRect(0,0,canvas.width,canvas.height)
         player.draw(ctx)
-        player.update(input)
-        platform.draw()
-        
+        player.update(input,platforms)
+        addPlatforms(platforms,ctx)
+        div.textContent = `x = ${player.x}, y= ${player.y}, vx = ${player.vx}, vy = ${player.vy}, weight = ${player.weight}, isOnGround = ${player.isOnGround()}`       
         requestAnimationFrame(animate)
 
     }
     animate()
-    
 })  
 
