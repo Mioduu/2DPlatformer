@@ -46,6 +46,18 @@ window.addEventListener("load",()=> {
                 this.dWidth,
                 this.dHeight)
         }
+        isColliding(platform) {
+            if(
+                (this.x + this.width / 4 >= platform.position.x - platform.width / 2) &&
+                (this.x - this.width / 2 <= platform.position.x + platform.width / 2) &&
+                (this.y + this.height >= platform.position.y - platform.height / 2) &&
+                (this.y + this.height <= platform.position.y + platform.height / 2)
+            ) {
+                return true
+            }
+            return false
+            
+        }            
 
         update(input) {
             if(input.keys.includes("d")) {
@@ -65,27 +77,26 @@ window.addEventListener("load",()=> {
             this.x += this.vx
              
             if(input.keys.includes("w")) {
-                this.vy = -35    
+                this.vy = -25
                 this.frameX = 1
                 this.frameY = 0
             }  else {
                 this.vy = 0
             }
+
             if(this.x<0) {
                 this.x = 0
             } else if(this.x>this.gameWidth - this.width) {
                 this.x = this.gameWidth - this.width
-
             }
+
             if(this.y > this.gameHeight - this.height) {
                 this.y = this.gameHeight - this.height
             }
-         
-            
-            if(!this.isOnGround()) {
+            if(!this.isOnGround() && !this.isColliding(platform)) {
                 this.vy += this.weight
-                this.weight += 2
-            } else if(this.isOnGround()) {
+                this.weight += 1
+            } else if(this.isOnGround() || this.isColliding(platform)) {
                 this.weight = 1
                 
             }
@@ -112,12 +123,29 @@ window.addEventListener("load",()=> {
             
         }
     }
+    class Platform {
+        constructor() {
+            this.position = {
+                x: 400,
+                y: 500
+            }
+            this.width = 150
+            this.height = 20
+        }
+        draw() {
+            ctx.fillStyle = "red"
+            ctx.fillRect(this.position.x,this.position.y,this.width,this.height)
+        }
+    }
+
+    const platform = new Platform()
     const input = new InputHandler()
     const player = new Player(canvas.height, canvas.width)
     function animate() {
         ctx.clearRect(0,0,canvas.width,canvas.height)
         player.draw(ctx)
         player.update(input)
+        platform.draw()
         
         requestAnimationFrame(animate)
 
