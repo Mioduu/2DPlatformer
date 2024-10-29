@@ -16,15 +16,35 @@ window.addEventListener("load", () => {
             this.y = 0
             this.width = 2400
             this.height = 720 
-            this.speed = 3
+            this.speed = 2
         }
         draw(context) {
-            context.drawImage(this.image, this.x, this.y, this.width, this.height)
-            context.drawImage(this.image, this.x + this.width - this.speed, this.y, this.width, this.height)
+            context.drawImage(this.image, this.x, this.y, this.width, this.height) //main
+            context.drawImage(this.image, this.x + this.width, this.y, this.width, this.height) //right
+            context.drawImage(this.image, this.x - this.width, this.y, this.width, this.height) //left
+            context.drawImage(this.image, this.x, this.y + this.height, this.width, this.height) //down
+            context.drawImage(this.image, this.x, this.y - this.height, this.width, this.height) //up
+            context.drawImage(this.image, this.x + this.width, this.y + this.height, this.width, this.height) // right down corner
+            context.drawImage(this.image, this.x - this.width, this.y + this.height, this.width, this.height) // left down corner
+            context.drawImage(this.image, this.x + this.width, this.y - this.height, this.width, this.height) // right top corner
+            context.drawImage(this.image, this.x - this.width, this.y - this.height, this.width, this.height) // left top corner
         }
-        update() {
-            this.x -= this.speed
-            if(this.x < 0 - this.width) this.x = 0
+        update(player) {
+            if(player.vx > 0) {
+                this.x -= this.speed
+            } else if(player.vx < 0) {
+                this.x += this.speed
+            }
+            
+            if(player.vy > 0) {
+                this.y -= this.speed
+            } else if(player.vy < 0) {
+                this.y += this.speed
+            }
+            if (this.x < -this.width) this.x = 0
+            if (this.x > 0) this.x = -this.width
+            if (this.y < -this.height) this.y = 0
+            if (this.y > 0) this.y = -this.height   
         }
     }
 
@@ -40,11 +60,28 @@ window.addEventListener("load", () => {
             this.limitY = limitY
             this.startX = this.x
             this.startY = this.y
+            this.img = document.getElementById("platform")
+            this.frameX = 1
+            this.frameY = 0
+            this.sWidth = 60
+            this.sHeight = 100
+            this.dWidth = width
+            this.dHeight = height
         }
 
         draw(context) {
-            context.fillStyle = "black"
-            context.fillRect(this.x, this.y, this.width, this.height)
+            context.drawImage(
+                this.img,
+                this.frameX * this.dWidth + BASE_SPRITE_X_OFFSET,
+                this.frameY * this.dHeight + BASE_SPRITE_Y_OFFSET,
+                this.sWidth,
+                this.sHeight,
+                this.x,
+                this.y,
+                this.dWidth,
+                this.dHeight
+            )
+
         }
     }
 
@@ -191,7 +228,7 @@ window.addEventListener("load", () => {
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         background.draw(ctx)
-        background.update()
+        background.update(player)
         player.draw(ctx)
         player.update(input, platforms)
         platforms.forEach((platform) => platform.draw(ctx))
