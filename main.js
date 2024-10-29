@@ -5,13 +5,41 @@ window.addEventListener("load", () => {
     canvas.height = 720
     const BASE_SPRITE_X_OFFSET = 10
     const BASE_SPRITE_Y_OFFSET = 30
+    let score = 0
+
+    class Background {
+        constructor(gameWidth, gameHeight) {
+            this.gameWidth = gameWidth
+            this.gameHeight = gameHeight
+            this.image = document.getElementById("background")
+            this.x = 0
+            this.y = 0
+            this.width = 2400
+            this.height = 720 
+            this.speed = 3
+        }
+        draw(context) {
+            context.drawImage(this.image, this.x, this.y, this.width, this.height)
+            context.drawImage(this.image, this.x + this.width - this.speed, this.y, this.width, this.height)
+        }
+        update() {
+            this.x -= this.speed
+            if(this.x < 0 - this.width) this.x = 0
+        }
+    }
 
     class Platform {
-        constructor(x, y, width, height) {
+        constructor(x, y, width, height,speedX,speedY,limitX,limitY) {
             this.x = x
             this.y = y
             this.width = width
             this.height = height
+            this.speedX = speedX
+            this.speedY = speedY 
+            this.limitX = limitX
+            this.limitY = limitY
+            this.startX = this.x
+            this.startY = this.y
         }
 
         draw(context) {
@@ -70,6 +98,7 @@ window.addEventListener("load", () => {
         }
 
         update(input, platforms) {
+            let offset = 0
             if (input.keys.includes("d")) {
                 this.vx = 5
                 this.frameX = 0
@@ -88,13 +117,22 @@ window.addEventListener("load", () => {
                 this.frameX = 1
                 this.frameY = 0
             }
+            if(this.vx === 0 && this.vy === 0) {
+                this.frameX = 0
+                this.frameY = 0
+            }
 
             this.onPlatform = false
+            if(this.y < this.gameHeight / 3) {
+                offset = 2
+            }
             platforms.forEach((platform) => {
+                platform.y += offset
                 if (this.isOnPlatform(platform)) {
                     this.onPlatform = true
                     this.vy = 0
-                    this.y = platform.y - this.height
+                    platform.y = platform.y - 1
+                    this.y  = platform.y - this.height 
                 }
             })
 
@@ -131,6 +169,7 @@ window.addEventListener("load", () => {
 
     const input = new InputHandler()
     const player = new Player(canvas.height, canvas.width)
+    const background = new Background(canvas.width, canvas.height)
 
     // Definiujemy platformy w starszym stylu bez koloru
     const platforms = [
@@ -142,12 +181,21 @@ window.addEventListener("load", () => {
         new Platform(200, 300, 100, 20),
         new Platform(0, 200, 120, 20)
     ]
+    function displayScore(context) {
+        context.fillStyle = "black"
+        context.font = "40px Bold Font"
+        context.fillText("Score: " + score, 20, 50)
+
+    }
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
+        background.draw(ctx)
+        background.update()
         player.draw(ctx)
         player.update(input, platforms)
         platforms.forEach((platform) => platform.draw(ctx))
+        displayScore(ctx)
         requestAnimationFrame(animate)
     }
 
