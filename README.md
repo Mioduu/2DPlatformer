@@ -4,7 +4,7 @@
 - [x] Add Movement (Jump, Move left, Move right)
 - [x] Add Background 
 - [x] Add Scoreboard
-- [] Add Coins (Adding points mechanics)
-- [] Add New Levels
+- [ ] Add Coins (Adding points mechanics)
+- [ ] Add New Levels
 
 ### IN PROGRESS
