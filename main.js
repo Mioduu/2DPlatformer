@@ -35,17 +35,20 @@ window.addEventListener("load", () => {
             } else if(player.vx < 0) {
                 this.x += this.speed
             }
-            
-            if(player.vy > 0) {
+            if(player.vy > 0 && player.onPlatform) {
                 this.y -= this.speed
             } else if(player.vy < 0) {
                 this.y += this.speed
             }
+        
+            if (!player.onPlatform) {
+                if (this.y < -this.height) this.y = 0
+                if (this.y > 0) this.y = -this.height
+            }
             if (this.x < -this.width) this.x = 0
-            if (this.x > 0) this.x = -this.width
-            if (this.y < -this.height) this.y = 0
-            if (this.y > 0) this.y = -this.height   
+            if (this.x > 0) this.x = -this.width 
         }
+        
     }
 
     class Platform {
@@ -105,9 +108,11 @@ window.addEventListener("load", () => {
             this.dHeight = 153
             this.myImg = document.getElementById("player")
             this.onPlatform = false
+            this.onGround = false
         }
 
         isOnGround() {
+            this.onGround = true
             return this.y === this.gameHeight - this.height
         }
 
