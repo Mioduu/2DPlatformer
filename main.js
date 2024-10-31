@@ -57,10 +57,6 @@ window.addEventListener("load", () => {
             this.y = y
             this.width = width
             this.height = height
-            this.speedX = speedX
-            this.speedY = speedY 
-            this.limitX = limitX
-            this.limitY = limitY
             this.startX = this.x
             this.startY = this.y
             this.img = document.getElementById("platform")
@@ -94,7 +90,6 @@ window.addEventListener("load", () => {
             this.gameWidth = gameWidth
             this.width = 90
             this.height = 120
-            this.img = document.getElementById("player")
             this.x = 0
             this.y = this.gameHeight - this.height
             this.vx = 0
@@ -108,7 +103,6 @@ window.addEventListener("load", () => {
             this.dHeight = 153
             this.myImg = document.getElementById("player")
             this.onPlatform = false
-            this.onGround = false
         }
 
         isOnGround() {
@@ -230,6 +224,11 @@ window.addEventListener("load", () => {
 
     }
 
+    const debugPlayer = document.getElementById("playerDebug")
+    const debugBackground = document.getElementById("backgroundDebug")
+    const debugPlatform = document.getElementById("platformDebug")
+    
+
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         background.draw(ctx)
@@ -238,6 +237,9 @@ window.addEventListener("load", () => {
         player.update(input, platforms)
         platforms.forEach((platform) => platform.draw(ctx))
         displayScore(ctx)
+        debugPlayer.textContent = Object.keys(player).reduce((acc, curr) => acc += `${curr} = ${player[curr]}, `, '')
+        debugBackground.textContent = Object.keys(background).reduce((acc, curr) => acc += `${curr} = ${background[curr]}, `, '')
+        debugPlatform.textContent = Object.keys(platforms[0]).reduce((acc, curr) => acc += `${curr} = ${platforms[0][curr]}, `, '')
         requestAnimationFrame(animate)
     }
 
