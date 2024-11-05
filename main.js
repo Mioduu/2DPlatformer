@@ -1,7 +1,7 @@
 window.addEventListener("load", () => {
     const canvas = document.getElementById("gameCanva")
     const ctx = canvas.getContext("2d")
-    canvas.width = 800
+    canvas.width = 1000
     canvas.height = 720
     const BASE_SPRITE_X_OFFSET = 10
     const BASE_SPRITE_Y_OFFSET = 30
@@ -49,6 +49,31 @@ window.addEventListener("load", () => {
             if (this.x > 0) this.x = -this.width 
         }
         
+    }
+    class Coin {
+        constructor(x,y,width,height) {
+            this.x = x
+            this.y = y
+            this.width = width
+            this.height = height 
+            this.img = document.getElementById("coins")
+            this.sWidth = 16
+            this.sHeight = 18
+            this.dWidth = width 
+            this.dHeight = height
+        }
+        draw(context) {
+            context.drawImage(
+                this.img,
+                0, 0,
+                this.sWidth,
+                this.sHeight,
+                this.x,
+                this.y,
+                this.dWidth,
+                this.dHeight
+            )
+        }
     }
 
     class Platform {
@@ -133,7 +158,7 @@ window.addEventListener("load", () => {
             )
         }
 
-        update(input, platforms) {
+        update(input, platforms, coins) {
             let offset = 0
             if (input.keys.includes("d")) {
                 this.vx = 5
@@ -207,7 +232,6 @@ window.addEventListener("load", () => {
     const player = new Player(canvas.height, canvas.width)
     const background = new Background(canvas.width, canvas.height)
 
-    // Definiujemy platformy w starszym stylu bez koloru
     const platforms = [
         new Platform(470, 600, 150, 20),
         new Platform(700, 450, 150, 20),
@@ -217,6 +241,19 @@ window.addEventListener("load", () => {
         new Platform(200, 300, 100, 20),
         new Platform(0, 200, 120, 20)
     ]
+
+    const coins = [
+        new Coin(470, 550, 50, 50),
+        new Coin(700, 400, 50, 50),
+        new Coin(570, 250, 50, 50),
+        new Coin(500, 250, 50, 50),
+        new Coin(300, 250, 50, 50),
+        new Coin(200, 250, 50, 50),
+        new Coin(0, 150, 50, 50)
+    ]
+
+
+
     function displayScore(context) {
         context.fillStyle = "black"
         context.font = "40px Bold Font"
@@ -234,8 +271,9 @@ window.addEventListener("load", () => {
         background.draw(ctx)
         background.update(player)
         player.draw(ctx)
-        player.update(input, platforms)
+        player.update(input, platforms, coins)
         platforms.forEach((platform) => platform.draw(ctx))
+        coins.forEach((coin) => coin.draw(ctx))
         displayScore(ctx)
         debugPlayer.textContent = Object.keys(player).reduce((acc, curr) => acc += `${curr} = ${player[curr]}, `, '')
         debugBackground.textContent = Object.keys(background).reduce((acc, curr) => acc += `${curr} = ${background[curr]}, `, '')
