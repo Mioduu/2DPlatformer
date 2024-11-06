@@ -1,7 +1,7 @@
 window.addEventListener("load", () => {
     const canvas = document.getElementById("gameCanva")
     const ctx = canvas.getContext("2d")
-    canvas.width = 1000
+    canvas.width = 800
     canvas.height = 720
     const BASE_SPRITE_X_OFFSET = 10
     const BASE_SPRITE_Y_OFFSET = 30
@@ -61,18 +61,27 @@ window.addEventListener("load", () => {
             this.sHeight = 18
             this.dWidth = width 
             this.dHeight = height
+            this.collected = false
         }
         draw(context) {
-            context.drawImage(
-                this.img,
-                0, 0,
-                this.sWidth,
-                this.sHeight,
-                this.x,
-                this.y,
-                this.dWidth,
-                this.dHeight
-            )
+            if(!this.collected) {
+                context.drawImage(
+                    this.img,
+                    0, 0,
+                    this.sWidth,
+                    this.sHeight,
+                    this.x,
+                    this.y,
+                    this.dWidth,
+                    this.dHeight
+                )
+            }
+            
+        }
+        changePosition(gameWidth, gameHeight) {
+            this.x = Math.floor(Math.random() * (gameWidth - this.width))
+            this.y = Math.floor(Math.random() * (gameHeight - this.height))
+            this.collected = false
         }
     }
 
@@ -91,6 +100,21 @@ window.addEventListener("load", () => {
             this.sHeight = 100
             this.dWidth = width
             this.dHeight = height
+            this.speedY = 1
+            this.reseted = false
+        }
+
+        resetPosition() {
+            this.y = -this.height
+            this.x = Math.floor(Math.random() * (canvas.width - this.width)) 
+        }
+    
+        update(gameHeight) {
+            this.y += this.speedY
+    
+            if (this.y > gameHeight) {
+                this.resetPosition()
+            }
         }
 
         draw(context) {
@@ -129,6 +153,15 @@ window.addEventListener("load", () => {
             this.myImg = document.getElementById("player")
             this.onPlatform = false
         }
+
+            checkCollision(coin) {
+                return (
+                    this.x < coin.x + coin.width &&
+                    this.x + this.width > coin.x &&
+                    this.y < coin.y + coin.height &&
+                    this.y + this.height > coin.y
+                )
+            }
 
         isOnGround() {
             this.onGround = true
@@ -192,7 +225,7 @@ window.addEventListener("load", () => {
                 if (this.isOnPlatform(platform)) {
                     this.onPlatform = true
                     this.vy = 0
-                    platform.y = platform.y - 1
+                    platform.y = platform.y - 2
                     this.y  = platform.y - this.height 
                 }
             })
@@ -209,6 +242,13 @@ window.addEventListener("load", () => {
             if (this.y > this.gameHeight - this.height) {
                 this.y = this.gameHeight - this.height
             }
+
+            coins.forEach((coin) => {
+                if(this.checkCollision(coin) && !coin.collected) {
+                    score+=1
+                    coin.changePosition(this.gameWidth, this.gameHeight) 
+                }
+            })
         }
     }
 
@@ -233,13 +273,12 @@ window.addEventListener("load", () => {
     const background = new Background(canvas.width, canvas.height)
 
     const platforms = [
-        new Platform(470, 600, 150, 20),
-        new Platform(700, 450, 150, 20),
+        new Platform(100, 400, 100, 20),
+        new Platform(700, 450, 100, 20),
         new Platform(570, 300, 100, 20),
-        new Platform(500, 300, 100, 20),
-        new Platform(300, 300, 100, 20),
-        new Platform(200, 300, 100, 20),
-        new Platform(0, 200, 120, 20)
+        new Platform(100, 350, 100, 20),
+        new Platform(500, 500, 100, 20),
+        new Platform(300, 150, 100, 20),
     ]
 
     const coins = [
@@ -247,9 +286,6 @@ window.addEventListener("load", () => {
         new Coin(700, 400, 50, 50),
         new Coin(570, 250, 50, 50),
         new Coin(500, 250, 50, 50),
-        new Coin(300, 250, 50, 50),
-        new Coin(200, 250, 50, 50),
-        new Coin(0, 150, 50, 50)
     ]
 
 
@@ -272,7 +308,10 @@ window.addEventListener("load", () => {
         background.update(player)
         player.draw(ctx)
         player.update(input, platforms, coins)
-        platforms.forEach((platform) => platform.draw(ctx))
+        platforms.forEach((platform) => {
+            platform.update(canvas.height) 
+            platform.draw(ctx) 
+        })
         coins.forEach((coin) => coin.draw(ctx))
         displayScore(ctx)
         debugPlayer.textContent = Object.keys(player).reduce((acc, curr) => acc += `${curr} = ${player[curr]}, `, '')
