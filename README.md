@@ -8,7 +8,7 @@
 - [x] Add Background 
 - [x] Add Scoreboard
 - [x] Add Coins
-- [ ] Add Score Mechanics 
+- [x] Add Score Mechanics 
 - [ ] Add New Levels
 
 ### IN PROGRESS
