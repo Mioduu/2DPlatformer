@@ -9,6 +9,7 @@
 }
 
 #gameCanva {
+    display: none;
     border: 1px solid black;
     background-image: white;
     position: absolute;
@@ -32,4 +33,74 @@
 }
 #coins {
     display: none;
+}
+#menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 30px 50px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 1s ease-out;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+#menu h1 {
+    color: #f8f8ff;
+    font-size: 2.5em;
+    margin: 0;
+    padding-bottom: 20px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+#startGameButton {
+    font-family: 'Brush Script MT', cursive;
+    background: #4ecca3;
+    color: #1a1a2e;
+    font-size: 1.2em;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin: top 20px;
+    border: 5px solid #0B192C;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+#scoreDisplay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.2em;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#startGameButton:hover {
+    background: #33bca0;
+    border: 3px solid #1E3E62;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);
+    font-family: Arial, sans-serif;
 }

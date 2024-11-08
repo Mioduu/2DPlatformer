@@ -1,6 +1,19 @@
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
+    const startButton = document.getElementById("startGameButton")
+    const menu = document.getElementById("menu")
+    const gameCanvas = document.getElementById("gameCanva")
+
+
+startButton.addEventListener("click", () => {
+    menu.style.display = "none"
+    gameCanvas.style.display = "block"
+    startGame()
+   })
+})
+function startGame() {
     const canvas = document.getElementById("gameCanva")
     const ctx = canvas.getContext("2d")
+
     canvas.width = 800
     canvas.height = 720
     const BASE_SPRITE_X_OFFSET = 10
@@ -290,11 +303,9 @@ window.addEventListener("load", () => {
 
 
 
-    function displayScore(context) {
-        context.fillStyle = "black"
-        context.font = "40px Bold Font"
-        context.fillText("Score: " + score, 20, 50)
-
+    function displayScore() {
+        const scoreDisplay = document.getElementById("scoreDisplay")
+        scoreDisplay.textContent = "Score: " + score
     }
 
     const debugPlayer = document.getElementById("playerDebug")
@@ -313,7 +324,7 @@ window.addEventListener("load", () => {
             platform.draw(ctx) 
         })
         coins.forEach((coin) => coin.draw(ctx))
-        displayScore(ctx)
+        displayScore()
         debugPlayer.textContent = Object.keys(player).reduce((acc, curr) => acc += `${curr} = ${player[curr]}, `, '')
         debugBackground.textContent = Object.keys(background).reduce((acc, curr) => acc += `${curr} = ${background[curr]}, `, '')
         debugPlatform.textContent = Object.keys(platforms[0]).reduce((acc, curr) => acc += `${curr} = ${platforms[0][curr]}, `, '')
@@ -321,4 +332,5 @@ window.addEventListener("load", () => {
     }
 
     animate()
-})
+}
+
