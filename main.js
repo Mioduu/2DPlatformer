@@ -301,10 +301,10 @@ function startGame() {
 
     let sfx = {
         jump: new Howl({
-            src: '/sfx/cartoon-jump-6462.mp3'
+            src: 'sfx/cartoon-jump-6462.mp3'
         }),
         collect: new Howl({
-            src: '/sfx/coin-257878.mp3'
+            src: 'sfx/coin-257878.mp3'
         })
 
     }
