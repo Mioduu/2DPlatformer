@@ -92,6 +92,7 @@ function startGame() {
             
         }
         changePosition(gameWidth, gameHeight) {
+            sfx.collect.play()
             this.x = Math.floor(Math.random() * (gameWidth - this.width))
             this.y = Math.floor(Math.random() * (gameHeight - this.height))
             this.collected = false
@@ -220,6 +221,7 @@ function startGame() {
             this.x += this.vx
 
             if (input.keys.includes("w") && (this.isOnGround() || this.onPlatform)) {
+                sfx.jump.play()
                 this.vy = -25
                 this.frameX = 1
                 this.frameY = 0
@@ -289,17 +291,23 @@ function startGame() {
         new Platform(100, 400, 100, 20),
         new Platform(700, 450, 100, 20),
         new Platform(570, 300, 100, 20),
-        new Platform(100, 350, 100, 20),
-        new Platform(500, 500, 100, 20),
-        new Platform(300, 150, 100, 20),
+        
     ]
 
     const coins = [
         new Coin(470, 550, 50, 50),
         new Coin(700, 400, 50, 50),
-        new Coin(570, 250, 50, 50),
-        new Coin(500, 250, 50, 50),
     ]
+
+    let sfx = {
+        jump: new Howl({
+            src: '/sfx/cartoon-jump-6462.mp3'
+        }),
+        collect: new Howl({
+            src: '/sfx/coin-257878.mp3'
+        })
+
+    }
 
 
 
