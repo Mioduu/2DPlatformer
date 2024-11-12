@@ -211,13 +211,28 @@ function startGame() {
                 this.vx = 5
                 this.frameX = 0
                 this.frameY = 3
+                if(gameFrame % staggerFrame === 0){
+                    if(this.frameX<3){
+                        this.frameX++
+                    }else{
+                        this.frameX = 0
+                    }
+                }
             } else if (input.keys.includes("a")) {
                 this.vx = -5
                 this.frameX = 1
                 this.frameY = 2
+                if(gameFrame % staggerFrame === 0){
+                    if(this.frameX<3) {
+                        this.frameX++
+                    }else {
+                        this.frameX = 0
+                    }
+                }
             } else {
                 this.vx = 0
             }
+
             this.x += this.vx
 
             if (input.keys.includes("w") && (this.isOnGround() || this.onPlatform)) {
@@ -282,6 +297,8 @@ function startGame() {
             })
         }
     }
+    let gameFrame = 0
+    const staggerFrame = 10
 
     const input = new InputHandler()
     const player = new Player(canvas.height, canvas.width)
@@ -337,8 +354,8 @@ function startGame() {
         debugBackground.textContent = Object.keys(background).reduce((acc, curr) => acc += `${curr} = ${background[curr]}, `, '')
         debugPlatform.textContent = Object.keys(platforms[0]).reduce((acc, curr) => acc += `${curr} = ${platforms[0][curr]}, `, '')
         requestAnimationFrame(animate)
+        gameFrame++
     }
 
     animate()
 }
-
