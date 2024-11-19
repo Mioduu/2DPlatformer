@@ -141,3 +141,18 @@ body {
     background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);
     font-family: Arial, sans-serif;
 }
+
+#goalScore {
+    position: absolute;
+    top: 2%;
+    font-size: 1.2em;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+}
+#portal {
+    display: none;
+}

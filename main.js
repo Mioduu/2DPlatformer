@@ -20,6 +20,43 @@ function startGame() {
     const BASE_SPRITE_Y_OFFSET = 30
     let score = 0
 
+    class Portal {
+        constructor(x,y,width,height) {
+            this.img = document.getElementById("portal")
+            this.x = x
+            this.y = y
+            this.width = width
+            this.height = height 
+            this.sWidth = 32
+            this.sHeight = 32
+            this.dWidth = width
+            this.dHeight = height
+            this.currentFrame = 0
+            this.totalFrames = 3
+        }
+
+        draw(context) {
+
+            const frameX = (this.currentFrame % 3) * this.sWidth
+
+            if(score >= 15) {
+                context.drawImage(
+                    this.img,
+                    frameX, 0,
+                    this.sWidth,
+                    this.sHeight,
+                    this.x,
+                    this.y,
+                    this.dWidth,
+                    this.dHeight
+                )
+                if(gameFrame % 10 === 0) {
+                this.currentFrame = (this.currentFrame + 1) % this.totalFrames;
+                }
+            }
+            
+        }
+    }
     class Background {
         constructor(gameWidth, gameHeight) {
             this.gameWidth = gameWidth
@@ -205,6 +242,15 @@ function startGame() {
             )
         }
 
+        checkCollision(portal) {
+            return (
+                this.x < portal.x + portal.width &&
+                this.x + this.width > portal.x &&
+                this.y < portal.y + portal.height &&
+                this.y + this.height > portal.y 
+            )
+        }
+
         update(input, platforms, coins) {
             let offset = 0
             if (input.keys.includes("d")) {
@@ -298,7 +344,7 @@ function startGame() {
         }
     }
     let gameFrame = 0
-    const staggerFrame = 10
+    const staggerFrame = 5
 
     const input = new InputHandler()
     const player = new Player(canvas.height, canvas.width)
@@ -316,6 +362,9 @@ function startGame() {
         new Coin(700, 400, 50, 50),
     ]
 
+    const portal = new Portal(300, 525, 200, 200)
+    
+
     let sfx = {
         jump: new Howl({
             src: '/2DPlatformer/sfx/cartoon-jump-6462.mp3'
@@ -326,11 +375,14 @@ function startGame() {
 
     }
 
-
-
     function displayScore() {
         const scoreDisplay = document.getElementById("scoreDisplay")
         scoreDisplay.textContent = "Score: " + score
+    }
+
+    function displayGoal() {
+        const goalDisplay = document.getElementById("goalScore")
+        goalDisplay.textContent = "Goal: Collect 15 coins"
     }
 
     const debugPlayer = document.getElementById("playerDebug")
@@ -343,13 +395,17 @@ function startGame() {
         background.draw(ctx)
         background.update(player)
         player.draw(ctx)
-        player.update(input, platforms, coins)
+        player.update(input, platforms, coins, portal)
         platforms.forEach((platform) => {
             platform.update(canvas.height) 
             platform.draw(ctx) 
         })
+        displayGoal()
         coins.forEach((coin) => coin.draw(ctx))
         displayScore()
+        if(score >= 15) {
+            portal.draw(ctx)
+        }
         debugPlayer.textContent = Object.keys(player).reduce((acc, curr) => acc += `${curr} = ${player[curr]}, `, '')
         debugBackground.textContent = Object.keys(background).reduce((acc, curr) => acc += `${curr} = ${background[curr]}, `, '')
         debugPlatform.textContent = Object.keys(platforms[0]).reduce((acc, curr) => acc += `${curr} = ${platforms[0][curr]}, `, '')
