@@ -1,8 +1,28 @@
+let level = 1
+
+let levels = {
+    2: {
+        init: () => {
+            platforms.splice(0, platforms.length)
+            coins.splice(0, coins.length)
+        }
+    }
+}
+
+function changeLevel(nextLevel) {
+    if (levels[nextLevel]) {
+        level = nextLevel
+        levels[nextLevel].init()
+        score = 0
+        player.x = 0
+        player.y = canvas.height - player.height
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const startButton = document.getElementById("startGameButton")
     const menu = document.getElementById("menu")
     const gameCanvas = document.getElementById("gameCanva")
-
 
 startButton.addEventListener("click", () => {
     menu.style.display = "none"
@@ -33,6 +53,7 @@ function startGame() {
             this.dHeight = height
             this.currentFrame = 0
             this.totalFrames = 3
+            this.shown = false
         }
 
         draw(context) {
@@ -53,6 +74,7 @@ function startGame() {
                 if(gameFrame % 10 === 0) {
                 this.currentFrame = (this.currentFrame + 1) % this.totalFrames;
                 }
+                this.shown = true
             }
             
         }
@@ -251,7 +273,7 @@ function startGame() {
             )
         }
 
-        update(input, platforms, coins) {
+        update(input, platforms, coins, level) {
             let offset = 0
             if (input.keys.includes("d")) {
                 this.vx = 5
@@ -325,6 +347,17 @@ function startGame() {
                     coin.changePosition(this.gameWidth, this.gameHeight) 
                 }
             })
+
+            if(portal.shown === true) {
+                sfx.spawn.play()
+            }
+
+            if(this.checkCollision(portal) && portal.shown === true) {
+                gsap.to(overlay, {
+                    opacity: 1
+                })
+                changeLevel(level + 1)
+            }
         }
     }
 
@@ -371,6 +404,9 @@ function startGame() {
         }),
         collect: new Howl({
             src: '/2DPlatformer/sfx/coin-257878.mp3'
+        }),
+        spawn: new Howl({
+            src: '/2DPlatformer/sfx/portal-phase-jump-6355.mp3'
         })
 
     }
@@ -388,8 +424,12 @@ function startGame() {
     const debugPlayer = document.getElementById("playerDebug")
     const debugBackground = document.getElementById("backgroundDebug")
     const debugPlatform = document.getElementById("platformDebug")
-    
 
+    const overlay = {
+        opacity: 0
+    }
+    
+    
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         background.draw(ctx)
@@ -411,6 +451,11 @@ function startGame() {
         debugPlatform.textContent = Object.keys(platforms[0]).reduce((acc, curr) => acc += `${curr} = ${platforms[0][curr]}, `, '')
         requestAnimationFrame(animate)
         gameFrame++
+        ctx.save()
+        ctx.globalAlpha = overlay.opacity
+        ctx.fillStyle = 'black'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.restore()
     }
 
     animate()
