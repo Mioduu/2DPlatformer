@@ -54,6 +54,7 @@ function startGame() {
             this.currentFrame = 0
             this.totalFrames = 3
             this.shown = false
+            this.soundPlayed = false
         }
 
         draw(context) {
@@ -348,8 +349,9 @@ function startGame() {
                 }
             })
 
-            if(portal.shown === true) {
+            if (!this.soundPlayed && portal.shown === true) {
                 sfx.spawn.play()
+                this.soundPlayed = true
             }
 
             if(this.checkCollision(portal) && portal.shown === true) {
