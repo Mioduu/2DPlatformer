@@ -1,28 +1,8 @@
-let level = 1
-
-let levels = {
-    2: {
-        init: () => {
-            platforms.splice(0, platforms.length)
-            coins.splice(0, coins.length)
-        }
-    }
-}
-
-function changeLevel(nextLevel) {
-    if (levels[nextLevel]) {
-        level = nextLevel
-        levels[nextLevel].init()
-        score = 0
-        player.x = 0
-        player.y = canvas.height - player.height
-    }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     const startButton = document.getElementById("startGameButton")
     const menu = document.getElementById("menu")
     const gameCanvas = document.getElementById("gameCanva")
+    const secondLevel = document.getElementById("level2")
 
 startButton.addEventListener("click", () => {
     menu.style.display = "none"
@@ -39,6 +19,7 @@ function startGame() {
     const BASE_SPRITE_X_OFFSET = 10
     const BASE_SPRITE_Y_OFFSET = 30
     let score = 0
+    let level = 1
 
     class Portal {
         constructor(x,y,width,height) {
@@ -54,6 +35,7 @@ function startGame() {
             this.currentFrame = 0
             this.totalFrames = 3
             this.shown = false
+            this.soundPlayed = false
         }
 
         draw(context) {
@@ -122,6 +104,55 @@ function startGame() {
         }
         
     }
+
+    class Level2 {
+        constructor(gameWidth, gameHeight) {
+            this.gameWidth = gameWidth
+            this.gameHeight = gameHeight
+            this.image = document.getElementById("secondLevel")
+            this.x = 0
+            this.y = 0
+            this.width = 2400
+            this.height = 720 
+            this.speed = 2
+        }
+
+        draw(context) {
+            context.drawImage(this.image, this.x, this.y, this.width, this.height) //main
+            context.drawImage(this.image, this.x + this.width, this.y, this.width, this.height) //right
+            context.drawImage(this.image, this.x - this.width, this.y, this.width, this.height) //left
+            context.drawImage(this.image, this.x, this.y + this.height, this.width, this.height) //down
+            context.drawImage(this.image, this.x, this.y - this.height, this.width, this.height) //up
+            context.drawImage(this.image, this.x + this.width, this.y + this.height, this.width, this.height) // right down corner
+            context.drawImage(this.image, this.x - this.width, this.y + this.height, this.width, this.height) // left down corner
+            context.drawImage(this.image, this.x + this.width, this.y - this.height, this.width, this.height) // right top corner
+            context.drawImage(this.image, this.x - this.width, this.y - this.height, this.width, this.height) // left top corner
+        }
+
+        update(player) {
+            if(player.vx > 0) {
+                this.x -= this.speed
+            } else if(player.vx < 0) {
+                this.x += this.speed
+            }
+            if(player.vy > 0 && player.onPlatform) {
+                this.y -= this.speed
+            } else if(player.vy < 0) {
+                this.y += this.speed
+            }
+        
+            if (!player.onPlatform) {
+                if (this.y < -this.height) this.y = 0
+                if (this.y > 0) this.y = -this.height
+            }
+            if (this.x < -this.width) this.x = 0
+            if (this.x > 0) this.x = -this.width 
+        }
+
+    }
+
+
+
     class Coin {
         constructor(x,y,width,height) {
             this.x = x
@@ -159,13 +190,57 @@ function startGame() {
     }
 
     class Platform {
-        constructor(x, y, width, height,speedX,speedY,limitX,limitY) {
+        constructor(x, y, width, height) {
             this.x = x
             this.y = y
             this.width = width
             this.height = height
-            this.startX = this.x
-            this.startY = this.y
+            this.img = document.getElementById("platform")
+            this.frameX = 1
+            this.frameY = 0
+            this.sWidth = 60
+            this.sHeight = 100
+            this.dWidth = width
+            this.dHeight = height
+            this.speedY = 1
+            this.reseted = false
+        }
+
+        resetPosition() {
+            this.y = -this.height
+            this.x = Math.floor(Math.random() * (canvas.width - this.width)) 
+        }
+    
+        update(gameHeight) {
+            this.y += this.speedY
+    
+            if (this.y > gameHeight) {
+                this.resetPosition()
+            }
+        }
+
+        draw(context) {
+            context.drawImage(
+                this.img,
+                this.frameX * this.dWidth + BASE_SPRITE_X_OFFSET,
+                this.frameY * this.dHeight + BASE_SPRITE_Y_OFFSET,
+                this.sWidth,
+                this.sHeight,
+                this.x,
+                this.y,
+                this.dWidth,
+                this.dHeight
+            )
+
+        }
+    }
+
+    class level2Platform {
+        constructor(x, y, width, height) {
+            this.x = x
+            this.y = y
+            this.width = width
+            this.height = height
             this.img = document.getElementById("platform")
             this.frameX = 1
             this.frameY = 0
@@ -225,6 +300,7 @@ function startGame() {
             this.dHeight = 153
             this.myImg = document.getElementById("player")
             this.onPlatform = false
+            this.onLevel = 1
         }
 
             checkCollision(coin) {
@@ -273,7 +349,7 @@ function startGame() {
             )
         }
 
-        update(input, platforms, coins, level) {
+        update(input, platforms = [], coins = []) {
             let offset = 0
             if (input.keys.includes("d")) {
                 this.vx = 5
@@ -348,15 +424,15 @@ function startGame() {
                 }
             })
 
-            if(portal.shown === true) {
+            if (!this.soundPlayed && portal.shown === true) {
                 sfx.spawn.play()
+                this.soundPlayed = true
             }
 
             if(this.checkCollision(portal) && portal.shown === true) {
-                gsap.to(overlay, {
-                    opacity: 1
-                })
-                changeLevel(level + 1)
+                player.onLevel = 2
+                platforms.length = 0
+                coins.length = 0
             }
         }
     }
@@ -382,6 +458,7 @@ function startGame() {
     const input = new InputHandler()
     const player = new Player(canvas.height, canvas.width)
     const background = new Background(canvas.width, canvas.height)
+    const level2 = new Level2(canvas.width, canvas.height)
 
     const platforms = [
         new Platform(100, 400, 100, 20),
@@ -397,16 +474,20 @@ function startGame() {
 
     const portal = new Portal(300, 525, 200, 200)
     
+    
 
     let sfx = {
         jump: new Howl({
-            src: '/2DPlatformer/sfx/cartoon-jump-6462.mp3'
+            src: '/2DPlatformer/sfx/cartoon-jump-6462.mp3',
+            volume: 0.5
         }),
         collect: new Howl({
-            src: '/2DPlatformer/sfx/coin-257878.mp3'
+            src: '/2DPlatformer/sfx/coin-257878.mp3',
+            volume: 0.5
         }),
         spawn: new Howl({
-            src: '/2DPlatformer/sfx/portal-phase-jump-6355.mp3'
+            src: '/2DPlatformer/sfx/portal-phase-jump-6355.mp3',
+            volume: 0.6
         })
 
     }
@@ -424,38 +505,59 @@ function startGame() {
     const debugPlayer = document.getElementById("playerDebug")
     const debugBackground = document.getElementById("backgroundDebug")
     const debugPlatform = document.getElementById("platformDebug")
-
-    const overlay = {
-        opacity: 0
-    }
+    const debugLevel2 = document.getElementById("level2Debug")
     
     
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        background.draw(ctx)
-        background.update(player)
-        player.draw(ctx)
-        player.update(input, platforms, coins, portal)
-        platforms.forEach((platform) => {
-            platform.update(canvas.height) 
-            platform.draw(ctx) 
-        })
-        displayGoal()
-        coins.forEach((coin) => coin.draw(ctx))
-        displayScore()
-        if(score >= 15) {
+
+        if(player.onLevel === 1) {
+            background.draw(ctx)
+            background.update(player)
+            platforms.forEach((platform) => {
+                platform.update(canvas.height) 
+                platform.draw(ctx) 
+            })
+            player.draw(ctx)
+            player.update(input, platforms, coins, portal)
+        
+            
+            coins.forEach((coin) => coin.draw(ctx))
+            if(score >= 15) {
             portal.draw(ctx)
+            }
         }
+        if(player.onLevel === 2) {
+
+            const level2Platforms = [
+                new level2Platform(100, 400, 100, 20),
+                new level2Platform(400, 100, 100, 20),
+                new level2Platform(600, 300, 100, 20),
+            ]
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            level2.draw(ctx)
+            level2.update(player)
+
+            level2Platforms.forEach((platform) => {
+                platform.update(canvas.height)
+                platform.draw(ctx)
+            })
+            player.draw(ctx)
+            player.update(input, level2Platforms,)
+        }
+
         debugPlayer.textContent = Object.keys(player).reduce((acc, curr) => acc += `${curr} = ${player[curr]}, `, '')
         debugBackground.textContent = Object.keys(background).reduce((acc, curr) => acc += `${curr} = ${background[curr]}, `, '')
+        if(platforms.length > 0) {
         debugPlatform.textContent = Object.keys(platforms[0]).reduce((acc, curr) => acc += `${curr} = ${platforms[0][curr]}, `, '')
+        }
+        debugLevel2.textContent = Object.keys(level2).reduce((acc, curr) => acc += `${curr} = ${level2[curr]}, `, '')
+
+        displayGoal()
+        displayScore()
         requestAnimationFrame(animate)
         gameFrame++
-        ctx.save()
-        ctx.globalAlpha = overlay.opacity
-        ctx.fillStyle = 'black'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.restore()
     }
 
     animate()
