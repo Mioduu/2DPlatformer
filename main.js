@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const startButton = document.getElementById("startGameButton")
     const menu = document.getElementById("menu")
     const gameCanvas = document.getElementById("gameCanva")
-    const secondLevel = document.getElementById("level2")
+    const secondLevel = document.getElementById("secondLevel")
 
 startButton.addEventListener("click", () => {
     menu.style.display = "none"
@@ -467,6 +467,12 @@ function startGame() {
         
     ]
 
+    const level2Platforms = [
+        new level2Platform(100, 400, 100, 20),
+        new level2Platform(400, 100, 100, 20),
+        new level2Platform(600, 300, 100, 20),
+    ]
+
     const coins = [
         new Coin(470, 550, 50, 50),
         new Coin(700, 400, 50, 50),
@@ -478,15 +484,15 @@ function startGame() {
 
     let sfx = {
         jump: new Howl({
-            src: '/2DPlatformer/sfx/cartoon-jump-6462.mp3',
+            src: './sfx/cartoon-jump-6462.mp3',
             volume: 0.5
         }),
         collect: new Howl({
-            src: '/2DPlatformer/sfx/coin-257878.mp3',
+            src: './sfx/coin-257878.mp3',
             volume: 0.5
         }),
         spawn: new Howl({
-            src: '/2DPlatformer/sfx/portal-phase-jump-6355.mp3',
+            src: './sfx/portal-phase-jump-6355.mp3',
             volume: 0.6
         })
 
@@ -528,13 +534,6 @@ function startGame() {
             }
         }
         if(player.onLevel === 2) {
-
-            const level2Platforms = [
-                new level2Platform(100, 400, 100, 20),
-                new level2Platform(400, 100, 100, 20),
-                new level2Platform(600, 300, 100, 20),
-            ]
-
             ctx.clearRect(0, 0, canvas.width, canvas.height)
             level2.draw(ctx)
             level2.update(player)
@@ -544,7 +543,7 @@ function startGame() {
                 platform.draw(ctx)
             })
             player.draw(ctx)
-            player.update(input, level2Platforms,)
+            player.update(input, level2Platforms)
         }
 
         debugPlayer.textContent = Object.keys(player).reduce((acc, curr) => acc += `${curr} = ${player[curr]}, `, '')
