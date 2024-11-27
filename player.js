@@ -137,14 +137,8 @@ export default class Player {
                 this.y = this.gameHeight - this.height
             }
 
-            coins.forEach((coin) => {
-                if(this.checkCollision(coin) && !coin.collected) {
-                    coin.collect()
-                    score.increaseScore()
-                    coin.changePosition(this.gameWidth, this.gameHeight) 
+            coins.forEach((coin) => coin.handleCollision(this))
                     //TODO: destroy coin on collision and create a new one at random position in play area
-                }
-            })
 
             if (!this.soundPlayed && portal.shown === true) {
                 SFX.spawn.play()

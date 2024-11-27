@@ -51,8 +51,8 @@ function startGame() {
     ]
 
     const coins = [
-        new Coin(470, 550, 50, 50),
-        new Coin(700, 400, 50, 50),
+        new Coin(470, 550, 50, 50,() => score.increaseScore()),
+        new Coin(700, 400, 50, 50, () => score.increaseScore()),
     ]
 
     const portal = new Portal(300, 525, 200, 200) 
