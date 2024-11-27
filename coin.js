@@ -1,7 +1,8 @@
 import { SFX } from "./constants.js"
 
+
 export default class Coin {
-        constructor(x,y,width,height) {
+        constructor(x,y,width,height, score) {
             this.x = x
             this.y = y
             this.width = width
@@ -12,6 +13,7 @@ export default class Coin {
             this.dWidth = width 
             this.dHeight = height
             this.collected = false
+            this.score = score
         }
         draw(context) {
             if(!this.collected) {
@@ -28,8 +30,18 @@ export default class Coin {
             }
             
         }
+
+        collect(gameWidth, gameHeight, score) {
+            if(!this.collected) {
+                this.collected = true
+                SFX.collect.play()
+                score.increaseScore()
+                this.changePosition(gameWidth, gameHeight)
+            }
+
+        }
+
         changePosition(gameWidth, gameHeight) {
-            SFX.collect.play()
             this.x = Math.floor(Math.random() * (gameWidth - this.width))
             this.y = Math.floor(Math.random() * (gameHeight - this.height))
             this.collected = false

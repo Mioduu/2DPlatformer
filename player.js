@@ -1,4 +1,5 @@
 import { BASE_SPRITE_X_OFFSET, BASE_SPRITE_Y_OFFSET, FRAME_STAGGER, SFX } from "./constants.js"
+import Score from "./score.js"
 
 export default class Player {
         constructor(gameHeight, gameWidth) {
@@ -68,7 +69,7 @@ export default class Player {
             )
         }
 
-        update(input, gameFrame, platforms = [], coins = []) {
+        update(input, gameFrame, platforms = [], coins = [], score) {
             let offset = 0
             if (input.keys.includes("d")) {
                 this.vx = 5
@@ -138,9 +139,10 @@ export default class Player {
 
             coins.forEach((coin) => {
                 if(this.checkCollision(coin) && !coin.collected) {
-                   //TODO: add score counting on collision with coin 
-                   //TODO: destroy coin on collision and create a new one at random position in play area
+                    coin.collect()
+                    score.increaseScore()
                     coin.changePosition(this.gameWidth, this.gameHeight) 
+                    //TODO: destroy coin on collision and create a new one at random position in play area
                 }
             })
 

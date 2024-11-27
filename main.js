@@ -4,12 +4,8 @@ import Background from "./background.js"
 import Coin from "./coin.js"
 import Portal from "./portal.js"
 import Platform from "./platform.js"
+import Score from "./score.js"
 import { BASE_SPRITE_X_OFFSET, BASE_SPRITE_Y_OFFSET } from "./constants.js"
-
-    function displayScore(score) {
-        const scoreDisplay = document.getElementById("scoreDisplay")
-        scoreDisplay.textContent = "Score: " + score
-    }
 
     function displayGoal() {
         const goalDisplay = document.getElementById("goalScore")
@@ -21,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const menu = document.getElementById("menu")
     const gameCanvas = document.getElementById("gameCanva")
     const secondLevel = document.getElementById("secondLevel")
+    
 
 startButton.addEventListener("click", () => {
     menu.style.display = "none"
@@ -35,11 +32,11 @@ function startGame() {
     canvas.width = 800
     canvas.height = 720  
     let level = 1 
-
     const input = new InputHandler()
     const player = new Player(canvas.height, canvas.width)
     const background = new Background(canvas.width, canvas.height)
     const level2 = new Level2(canvas.width, canvas.height)
+    const score = new Score("scoreDisplay")
 
     const platforms = [
         new Platform(100, 400, 100, 20),
@@ -64,6 +61,8 @@ function startGame() {
     const debugBackground = document.getElementById("backgroundDebug")
     const debugPlatform = document.getElementById("platformDebug")
     const debugLevel2 = document.getElementById("level2Debug") 
+    
+    
 
     function animate(gameFrame, score, level) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -76,11 +75,11 @@ function startGame() {
                 platform.draw(ctx) 
             })
             player.draw(ctx)
-            player.update(input,gameFrame, platforms, coins, portal)
+            player.update(input,gameFrame, platforms, coins, portal, score)
         
             
             coins.forEach((coin) => coin.draw(ctx))
-            if(score >= 15) {
+            if(score.getScore() >= 15) {
             portal.draw(ctx)
             }
         }
@@ -96,7 +95,8 @@ function startGame() {
             player.draw(ctx)
             player.update(input, level2Platforms)
         }
-
+        console.log(score)
+        score.display()
         debugPlayer.textContent = Object.keys(player).reduce((acc, curr) => acc += `${curr} = ${player[curr]}, `, '')
         debugBackground.textContent = Object.keys(background).reduce((acc, curr) => acc += `${curr} = ${background[curr]}, `, '')
         if(platforms.length > 0) {
@@ -105,12 +105,12 @@ function startGame() {
         debugLevel2.textContent = Object.keys(level2).reduce((acc, curr) => acc += `${curr} = ${level2[curr]}, `, '')
 
         displayGoal()
-        displayScore(score)
+        
         requestAnimationFrame(() => animate(gameFrame, score, level))
         gameFrame++
     }
 
-    animate(0, 0, 1)
+    animate(0, score, 1)
 }
    class Level2 {
         constructor(gameWidth, gameHeight) {
@@ -157,12 +157,6 @@ function startGame() {
         }
 
     }
-
-
-
-
-
-    
 
     class level2Platform {
         constructor(x, y, width, height) {

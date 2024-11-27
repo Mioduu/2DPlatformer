@@ -1,4 +1,4 @@
- class InputHandler {
+class InputHandler {
         constructor() {
             this.keys = []
             document.body.addEventListener("keydown", (e) => {
