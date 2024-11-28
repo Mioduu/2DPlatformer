@@ -7,11 +7,7 @@ import Platform from "./platform.js"
 import Score from "./score.js"
 import { BASE_SPRITE_X_OFFSET, BASE_SPRITE_Y_OFFSET } from "./constants.js"
 
-    function displayGoal() {
-        const goalDisplay = document.getElementById("goalScore")
-        goalDisplay.textContent = "Goal: Collect 15 coins"
-    }
-
+    
 document.addEventListener("DOMContentLoaded", () => {
     const startButton = document.getElementById("startGameButton")
     const menu = document.getElementById("menu")
@@ -53,6 +49,14 @@ function startGame() {
     const debugPlayer = document.getElementById("playerDebug")
     const debugBackground = document.getElementById("backgroundDebug")
     const debugPlatform = document.getElementById("platformDebug")
+
+    function displayGoal() {
+        const goalDisplay = document.getElementById("goalScore")
+        goalDisplay.textContent = "Goal: Collect 15 coins"
+        if(portal.shown === true) {
+            goalDisplay.textContent = "Enter the portal"
+        }
+    }
     
     
 
@@ -83,7 +87,6 @@ function startGame() {
         }
 
         displayGoal()
-        
         requestAnimationFrame(() => animate(gameFrame, score, level))
         gameFrame++
     }
