@@ -1,5 +1,5 @@
 import { BASE_SPRITE_X_OFFSET, BASE_SPRITE_Y_OFFSET, FRAME_STAGGER, SFX } from "./constants.js"
-import Score from "./score.js"
+
 
 export default class Player {
         constructor(gameHeight, gameWidth) {
@@ -23,12 +23,12 @@ export default class Player {
             this.onLevel = 1
         }
 
-            checkCollision(coin) {
-                return (
-                    this.x < coin.x + coin.width &&
-                    this.x + this.width > coin.x &&
-                    this.y < coin.y + coin.height &&
-                    this.y + this.height > coin.y
+        checkCollision(portal) {
+            return (
+                    this.x < portal.x + portal.width &&
+                    this.x + this.width > portal.x &&
+                    this.y < portal.y + portal.height &&
+                    this.y + this.height > portal.y
                 )
             }
 
@@ -57,15 +57,6 @@ export default class Player {
                 this.y,
                 this.dWidth,
                 this.dHeight
-            )
-        }
-
-        checkCollision(portal) {
-            return (
-                this.x < portal.x + portal.width &&
-                this.x + this.width > portal.x &&
-                this.y < portal.y + portal.height &&
-                this.y + this.height > portal.y 
             )
         }
 
@@ -136,17 +127,7 @@ export default class Player {
             }
 
             coins.forEach((coin) => coin.handleCollision(this, this.gameWidth, this.gameHeight))
-                    //TODO: destroy coin on collision and create a new one at random position in play area
-
-            if (!this.soundPlayed && portal.shown === true) {
-                SFX.spawn.play()
-                this.soundPlayed = true
-            }
-
-            if(this.checkCollision(portal) && portal.shown === true) {
-                player.onLevel = 2
-                platforms.length = 0
-                coins.length = 0
-            }
+            
+            
         }
     }

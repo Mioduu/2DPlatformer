@@ -19,16 +19,16 @@ export default class Platform {
             this.reseted = false
         }
 
-        resetPosition() {
+        resetPosition(gameWidth) {
             this.y = -this.height
-            this.x = Math.floor(Math.random() * (this.gameWidth - this.width)) 
+            this.x = Math.floor(Math.random() * (gameWidth - this.width)) 
         }
     
         update(gameHeight) {
             this.y += this.speedY
     
             if (this.y > gameHeight) {
-                this.resetPosition()
+                this.resetPosition(gameHeight)
             }
         }
 

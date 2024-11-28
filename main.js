@@ -72,11 +72,10 @@ function startGame() {
             
             coins.forEach((coin) => coin.draw(ctx))
             if(score.getScore() >= 15) {
-            portal.draw(ctx)
+                portal.spawnPortal()
+                portal.draw(ctx, gameFrame)
             }
         }
-        console.log(score)
-        score.display()
         debugPlayer.textContent = Object.keys(player).reduce((acc, curr) => acc += `${curr} = ${player[curr]}, `, '')
         debugBackground.textContent = Object.keys(background).reduce((acc, curr) => acc += `${curr} = ${background[curr]}, `, '')
         if(platforms.length > 0) {

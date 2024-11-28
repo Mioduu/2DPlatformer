@@ -1,3 +1,5 @@
+import { SFX } from "./constants.js"
+
 export default class Portal {
         constructor(x,y,width,height) {
             this.img = document.getElementById("portal")
@@ -19,7 +21,6 @@ export default class Portal {
 
             const frameX = (this.currentFrame % 3) * this.sWidth
 
-            if(score >= 15) {
                 context.drawImage(
                     this.img,
                     frameX, 0,
@@ -34,7 +35,23 @@ export default class Portal {
                 this.currentFrame = (this.currentFrame + 1) % this.totalFrames;
                 }
                 this.shown = true
+                console.log(this.shown)
             }
-            
-        }
-    }
+
+            handleCollision(player) {
+                    if( this.shown === true &&
+                        this.x < player.x + player.width &&
+                        this.x + this.width > player.x &&
+                        this.y < player.y + player.height &&
+                        this.y + this.height > player.y 
+                    ) {
+                        player.onLevel = 2
+                    }
+                } 
+            spawnPortal() {
+                if(this.shown === true && this.soundPlayed === false) {
+                    SFX.spawn.play()
+                    this.soundPlayed = true
+                }
+            }
+            }
