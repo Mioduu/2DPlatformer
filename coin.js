@@ -1,7 +1,9 @@
 import { SFX } from "./constants.js"
 
 export default class Coin {
-        constructor(x,y,width,height, increaseScore) {
+        constructor(x,y,width,height, increaseScore, gameWidth, gameHeight) {
+            this.gameWidth = gameWidth
+            this.gameHeight = gameHeight
             this.x = x
             this.y = y
             this.width = width

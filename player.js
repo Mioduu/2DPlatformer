@@ -73,7 +73,6 @@ export default class Player {
             let offset = 0
             if (input.keys.includes("d")) {
                 this.vx = 5
-                this.frameX = 0
                 this.frameY = 3
                 if(gameFrame % FRAME_STAGGER === 0){
                     if(this.frameX<3){
@@ -84,7 +83,6 @@ export default class Player {
                 }
             } else if (input.keys.includes("a")) {
                 this.vx = -5
-                this.frameX = 1
                 this.frameY = 2
                 if(gameFrame % FRAME_STAGGER === 0){
                     if(this.frameX<3) {
@@ -137,7 +135,7 @@ export default class Player {
                 this.y = this.gameHeight - this.height
             }
 
-            coins.forEach((coin) => coin.handleCollision(this))
+            coins.forEach((coin) => coin.handleCollision(this, this.gameWidth, this.gameHeight))
                     //TODO: destroy coin on collision and create a new one at random position in play area
 
             if (!this.soundPlayed && portal.shown === true) {

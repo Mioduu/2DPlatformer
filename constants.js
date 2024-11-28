@@ -1,6 +1,6 @@
 export const BASE_SPRITE_X_OFFSET = 10
 export const BASE_SPRITE_Y_OFFSET = 30
-export const FRAME_STAGGER = 5
+export const FRAME_STAGGER = 20
 export const SFX = {
         jump: new Howl({
             src: './sfx/cartoon-jump-6462.mp3',
