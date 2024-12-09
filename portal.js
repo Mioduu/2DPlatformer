@@ -1,12 +1,14 @@
 import { SFX } from "./constants.js"
 
 export default class Portal {
-        constructor(x,y,width,height) {
+        constructor(x,y,width,height, gameWidth, gameHeight) {
             this.img = document.getElementById("portal")
             this.x = x
             this.y = y
             this.width = width
             this.height = height 
+            this.gameWidth = gameWidth
+            this.gameHeight = gameHeight
             this.sWidth = 32
             this.sHeight = 32
             this.dWidth = width
@@ -38,20 +40,21 @@ export default class Portal {
                 console.log(this.shown)
             }
 
-            handleCollision(player) {
-                    if( this.shown === true &&
-                        this.x < player.x + player.width &&
-                        this.x + this.width > player.x &&
-                        this.y < player.y + player.height &&
-                        this.y + this.height > player.y 
-                    ) {
-                        player.onLevel = 2
-                    }
-                } 
             spawnPortal() {
                 if(this.shown === true && this.soundPlayed === false) {
                     SFX.spawn.play()
                     this.soundPlayed = true
                 }
             }
+
+            handleCollision(player) {
+                if(
+                    !this.collected && 
+                    player.x < this.x + this.width &&
+                    player.x + player.width > this.x &&
+                    player.y < this.y + this.height &&
+                    player.y + player.height > this.y) {
+                        player.onLevel = 2
+            }
+        }
             }

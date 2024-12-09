@@ -8,7 +8,9 @@ export default class Background {
             this.width = 2400
             this.height = 720 
             this.speed = 2
+            this.level2 = document.getElementById("secondLevel")
         }
+
         draw(context) {
             context.drawImage(this.image, this.x, this.y, this.width, this.height) //main
             context.drawImage(this.image, this.x + this.width, this.y, this.width, this.height) //right
@@ -20,6 +22,19 @@ export default class Background {
             context.drawImage(this.image, this.x + this.width, this.y - this.height, this.width, this.height) // right top corner
             context.drawImage(this.image, this.x - this.width, this.y - this.height, this.width, this.height) // left top corner
         }
+
+        draw2(context) {
+            context.drawImage(this.level2, this.x, this.y, this.width, this.height) //main
+            context.drawImage(this.level2, this.x + this.width, this.y, this.width, this.height) //right
+            context.drawImage(this.level2, this.x - this.width, this.y, this.width, this.height) //left
+            context.drawImage(this.level2, this.x, this.y + this.height, this.width, this.height) //down
+            context.drawImage(this.level2, this.x, this.y - this.height, this.width, this.height) //up
+            context.drawImage(this.level2, this.x + this.width, this.y + this.height, this.width, this.height) // right down corner
+            context.drawImage(this.level2, this.x - this.width, this.y + this.height, this.width, this.height) // left down corner
+            context.drawImage(this.level2, this.x + this.width, this.y - this.height, this.width, this.height) // right top corner
+            context.drawImage(this.level2, this.x - this.width, this.y - this.height, this.width, this.height) // left top corner
+        }
+
         update(player) {
             if(player.vx > 0) {
                 this.x -= this.speed

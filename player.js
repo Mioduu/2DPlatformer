@@ -60,7 +60,7 @@ export default class Player {
             )
         }
 
-        update(input, gameFrame, platforms = [], coins = [], score) {
+        update(input, gameFrame, platforms = [], coins = [], portal) {
             let offset = 0
             if (input.keys.includes("d")) {
                 this.vx = 5
@@ -127,7 +127,9 @@ export default class Player {
             }
 
             coins.forEach((coin) => coin.handleCollision(this, this.gameWidth, this.gameHeight))
-            
-            
+
+            if(portal.shown === true) {
+                portal.handleCollision(this)
+            }
         }
     }
